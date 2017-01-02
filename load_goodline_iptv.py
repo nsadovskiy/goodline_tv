@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from shutil import copy
+from html import unescape
 from struct import unpack
 from sys import argv, exit
 from urllib import request
@@ -59,7 +60,7 @@ def load_playlist():
         for track in track_re.findall(playlist):
             icon = get_tag_value(track, 'image')
             p = urlsplit(icon)
-            icon_url = urlunsplit((p.scheme, p.netloc, quote(p.path), p.query, p.fragment))
+            icon_url = urlunsplit((p.scheme, p.netloc, quote(unescape(p.path)), p.query, p.fragment))
             icon_name = split(p.path)[1]
             yield dict(
                 url=get_tag_value(track, 'location'),
