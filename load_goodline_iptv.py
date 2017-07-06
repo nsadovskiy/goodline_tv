@@ -111,11 +111,12 @@ def load_epg(path, epg):
             programs.append((o, t))
 
         for i in range(1, num_entries):
-            yield dict(program=tracks[programs[i-1][0]],
-                       escaped_program=escape(tracks[programs[i-1][0]]),
-                       start=programs[i-1][1],
-                       stop=programs[i][1]
-                       )
+            if programs[i-1][0] in tracks:
+                yield dict(program=tracks[programs[i-1][0]],
+                           escaped_program=escape(tracks[programs[i-1][0]]),
+                           start=programs[i-1][1],
+                           stop=programs[i][1]
+                           )
 
 
 if __name__ == '__main__':
