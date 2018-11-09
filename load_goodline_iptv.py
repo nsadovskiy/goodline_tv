@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 from urllib.parse import quote, urlsplit, urlunsplit
 
 
-EPG_URL = 'http://212.75.210.78/tv.zip'
-PLAYLIST_URL = 'http://212.75.210.50/playlist'
+EPG_URL = 'http://bolshoe.tv/tv.zip'
+PLAYLIST_URL = 'http://playlist.bolshoe.tv/playlist'
 
 
 XMLTV_FILENAME = 'teleguide.xmltv'
