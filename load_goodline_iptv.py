@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from urllib.parse import quote, urlsplit, urlunsplit
 
 
-EPG_URL = 'http://bolshoe.tv/tv.zip'
+EPG_URL = 'http://212.75.210.78/tv.zip'
 PLAYLIST_URL = 'http://212.75.210.50/playlist'
 
 
@@ -79,44 +79,47 @@ def load_epg(path, epg):
     pdt_filename = join(path, epg + '.pdt')
     ndx_filename = join(path, epg + '.ndx')
 
-    with open(ndx_filename, 'rb') as ndx_file, open(pdt_filename, 'rb') as pdt_file:
+    try:
+        with open(ndx_filename, 'rb') as ndx_file, open(pdt_filename, 'rb') as pdt_file:
 
-        hdr = pdt_file.read(26).decode('cp1251')
-        if hdr != JTV_HDR:
-            raise RuntimeError('File "%s" does not contain PDT valid header!' % pdt_filename)
+            hdr = pdt_file.read(26).decode('cp1251')
+            if hdr != JTV_HDR:
+                raise RuntimeError('File "%s" does not contain PDT valid header!' % pdt_filename)
 
-        offs = len(JTV_HDR)
-        tracks = dict()
+            offs = len(JTV_HDR)
+            tracks = dict()
 
-        while True:
-            track_len = pdt_file.read(2)
-            if len(track_len) != 2:
-                break
-            track_len = unpack('H', track_len)[0]
+            while True:
+                track_len = pdt_file.read(2)
+                if len(track_len) != 2:
+                    break
+                track_len = unpack('H', track_len)[0]
 
-            track = pdt_file.read(track_len)
-            if len(track) != track_len:
-                raise RuntimeError('Unexpected end of file while reading "%s"' % pdt_filename)
+                track = pdt_file.read(track_len)
+                if len(track) != track_len:
+                    raise RuntimeError('Unexpected end of file while reading "%s"' % pdt_filename)
 
-            tracks[offs] = track.decode('cp1251').strip()
-            offs += track_len + 2
+                tracks[offs] = track.decode('cp1251').strip()
+                offs += track_len + 2
 
-        num_entries = unpack('H', ndx_file.read(2))[0]
-        programs = list()
+            num_entries = unpack('H', ndx_file.read(2))[0]
+            programs = list()
 
-        for i in range(0, num_entries):
-            ndx_file.read(2)
-            t = datetime(1601, 1, 1) + timedelta(seconds=int(unpack('Q', ndx_file.read(8))[0] / 10000000))
-            o = unpack('H', ndx_file.read(2))[0]
-            programs.append((o, t))
+            for i in range(0, num_entries):
+                ndx_file.read(2)
+                t = datetime(1601, 1, 1) + timedelta(seconds=int(unpack('Q', ndx_file.read(8))[0] / 10000000))
+                o = unpack('H', ndx_file.read(2))[0]
+                programs.append((o, t))
 
-        for i in range(1, num_entries):
-            if programs[i-1][0] in tracks:
-                yield dict(program=tracks[programs[i-1][0]],
-                           escaped_program=escape(tracks[programs[i-1][0]]),
-                           start=programs[i-1][1],
-                           stop=programs[i][1]
-                           )
+            for i in range(1, num_entries):
+                if programs[i-1][0] in tracks:
+                    yield dict(program=tracks[programs[i-1][0]],
+                               escaped_program=escape(tracks[programs[i-1][0]]),
+                               start=programs[i-1][1],
+                               stop=programs[i][1]
+                               )
+    except FileNotFoundError:
+        pass
 
 
 if __name__ == '__main__':
@@ -125,6 +128,7 @@ if __name__ == '__main__':
         exit(1)
 
     files = []
+
 
     with TemporaryDirectory() as tmp_dir:
 
@@ -142,6 +146,7 @@ if __name__ == '__main__':
             files.append(M3U_FILENAME)
 
             m3u_file.write(M3U_HEADER)
+
             epg_file.write(XMLTV_HEADER)
 
             for tv in load_playlist():
