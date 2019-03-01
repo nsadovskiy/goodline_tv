@@ -5,14 +5,16 @@ from setuptools import setup
 
 setup(
     name='goodline-iptv',
-    version='0.1.0',
+    version='0.2.0',
     description='Goodline EPG and playlist downloader and converter',
-    author='SNS',
-    author_email='drochu@obeimi.info',
-    url='http://www.obeimi.info',
-    packages=[],
+    author='Nickolay Sadovskiy',
+    author_email='sns1081@gmail.com',
+    url='https://github.com/nsadovskiy/goodline_tv',
+    packages=['goodline_iptv'],
     include_package_data=True,
-    scripts=['load_goodline_iptv.py'],
+    scripts=['import_goodline_iptv.py'],
     install_requires=[
+        'aiohttp',
+        'aiofiles'
     ],
 )
