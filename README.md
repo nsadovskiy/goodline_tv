@@ -6,3 +6,5 @@ Playlist, icons and EPG capturer and converter for Goodline "BolshoeTV".
 
 ## Usage on Docker
 `docker exec -it goodline_iptv -e LOG_LEVEL=3`
+
+[![Build status](https://teamcity.sadovskiy.net/guestAuth/app/rest/builds/buildType:(id:GoodlineIptv_Build)/statusIcon.png)](https://teamcity.sadovskiy.net/viewType.html?buildTypeId=GoodlineIptv_Build)
