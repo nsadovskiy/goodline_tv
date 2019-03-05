@@ -3,9 +3,16 @@
 from setuptools import setup
 
 
+try:
+    with open('BUILD_NUMBER') as f:
+        BUILD_NUMBER = int(f.read())
+except:
+    BUILD_NUMBER = 0
+
+
 setup(
     name='goodline-iptv',
-    version='0.2.0',
+    version=f'0.2.{BUILD_NUMBER}',
     description='Goodline EPG and playlist downloader and converter',
     author='Nickolay Sadovskiy',
     author_email='sns1081@gmail.com',
