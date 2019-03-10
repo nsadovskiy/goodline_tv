@@ -37,4 +37,4 @@ class XmltvBuilder(object):
             await f.write(self.to_string(pretty))
 
     def to_string(self, pretty=False):
-        return minidom.parseString(tostring(self.root)).toprettyxml(indent=' ') if pretty else tostring(self.root, encoding='unicode')
+        return minidom.parseString(tostring(self.root, encoding='unicode')).toprettyxml(indent=' ') if pretty else tostring(self.root, encoding='unicode')
