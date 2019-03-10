@@ -1,9 +1,10 @@
 version: '3.1'
 services:
   goodline_ip:
-    image: 'docker.sadovskiy.net/goodline_iptv:latest'
+    build: .
     restart: "no"
     environment:
-      LOG_LEVEL: 3
+      LOG_LEVEL: 1
+      PRETTY_XMLTV: "True"
     volumes:
       - './iptv:/var/lib/goodline_iptv'
