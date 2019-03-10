@@ -5,6 +5,8 @@ from datetime import datetime
 from goodline_iptv.jtvfile import JtvFile
 from goodline_iptv.xmltv import XmltvBuilder
 from goodline_iptv.test.jtv_data import TV_ZIP
+from teamcity import is_running_under_teamcity
+from teamcity.unittestpy import TeamcityTestRunner
 
 
 logging.basicConfig(
@@ -79,4 +81,8 @@ class TestXmltv(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(verbosity=2)
+    if is_running_under_teamcity():
+        runner = TeamcityTestRunner()
+    else:
+        runner = unittest.TextTestRunner()
+    unittest.main(testRunner=runner, verbosity=2)
