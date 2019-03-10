@@ -24,6 +24,5 @@ if __name__ == '__main__':
     parser.add_argument('-v', '--verbosity', default=0, type=int, choices=range(0, 4), help='Verbosity level')
 
     args = parser.parse_args()
-    print(type(args.pretty_xmltv), args.pretty_xmltv, bool(args.pretty_xmltv))
 
     do_import(args.verbosity, args.out_dir, args.encoding, args.timezone, args.pretty_xmltv)
