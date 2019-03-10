@@ -9,36 +9,39 @@ class _Names(object):
     def __init__(self, buffer, encoding='cp1251'):
         self.__encoding = encoding
         self.__buffer = buffer
-        self.__ensure_signature()
         self.__names = dict()
 
+        self.__ensure_signature()
+
+        self.__load_names()
+
     def get_name(self, index):
-
-        if index not in self.__names:
-            self.__names[index] = self.__read_name(index)
-
-        return self.__names[index]
-
-    def __read_name(self, index):
-
-        name_offset = index + 2
-
-        if index + 2 >= len(self.__buffer):
-            raise RuntimeError('Unexpected end of file')
-
-        name_length = unpack_from('H', self.__buffer, index)[0]
-
-        if name_offset + name_length > len(self.__buffer):
-            raise RuntimeError('Unexpected end of file')
-
-        try:
-            return self.__buffer[name_offset:name_offset + name_length].decode(self.__encoding)
-        except UnicodeError:
-            raise RuntimeError('Error decoding track name')
+        return self.__names.get(index, '-')
 
     def __ensure_signature(self):
         if len(self.__buffer) < len(_Names.JTV_HEADER) or self.__buffer[:len(_Names.JTV_HEADER)].decode(self.__encoding, errors='ignore') != _Names.JTV_HEADER:
             raise RuntimeError('File does not have a valid JTV signature')
+
+    def __load_names(self):
+
+        offset = len(_Names.JTV_HEADER)
+
+        while offset + 2 < len(self.__buffer):
+
+            track_len = unpack_from('<H', self.__buffer, offset)[0]
+            offset += 2
+
+            if offset + track_len > len(self.__buffer):
+                raise RuntimeError('Unexpected end of file')
+
+            try:
+                track_name = self.__buffer[offset:offset + track_len].decode(self.__encoding)
+            except UnicodeError:
+                raise RuntimeError('Error decoding track name')
+
+            self.__names[offset - 2] = track_name
+
+            offset += track_len
 
 
 class _Tracks(object):
@@ -51,7 +54,7 @@ class _Tracks(object):
 
     def tracks(self):
         for i in range(self.__num_tracks):
-            program = unpack_from('=HQH', self.__buffer, 2 + i * _Tracks.NDX_RECORD_LEN)
+            program = unpack_from('<HQH', self.__buffer, 2 + i * _Tracks.NDX_RECORD_LEN)
             yield _Tracks.parse_time(program[1]), program[2]
 
     @staticmethod
