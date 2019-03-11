@@ -139,12 +139,12 @@ async def main(out_dir, encoding, timezone, pretty_xmltv):
             download_epg(http, EPG_URL, out_dir)
         )
 
+        await download_icons(http, playlist, out_dir)
+
         await gather(
-            download_icons(http, playlist, out_dir),
+            create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv),
             create_m3u(playlist, path.join(out_dir, PLAYLIST_FILENAME), log)
         )
-
-        await create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv)
 
     log.info(f'Finished due {datetime.now() - time_begin}')
 
