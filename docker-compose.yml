@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  goodline_ip:
+  goodline_iptv:
     build: .
     restart: "no"
     environment:
