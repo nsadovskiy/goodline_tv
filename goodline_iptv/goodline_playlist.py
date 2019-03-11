@@ -1,4 +1,4 @@
-import os
+from os import path
 from html import unescape
 from xml.etree import ElementTree as Xml
 from urllib.parse import urlsplit, urlunsplit, quote
@@ -28,7 +28,7 @@ def parse_playlist(text, log):
         image = track.find('{http://xspf.org/ns/0/}image').text
         icon_url = escape_url(image)
 
-        icon_name = os.path.basename(urlsplit(image).path)
+        icon_name = path.basename(urlsplit(image).path)
 
         log.debug(f'[{epg_id}] "{name}" stream: "{stream_url}", icon: "{icon_name}" <{icon_url}>')
 

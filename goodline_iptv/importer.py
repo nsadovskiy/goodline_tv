@@ -1,12 +1,13 @@
-import os
 import logging
+from os import path, mkdir
 from datetime import datetime
 from urllib.parse import urlsplit
 from aiofiles import open as open_file
 from aiohttp import ClientSession as Http
-from goodline_iptv.jtvfile import JtvFile
 from asyncio import get_event_loop, gather
+
 from goodline_iptv.m3u import create_m3u
+from goodline_iptv.jtvfile import JtvFile
 from goodline_iptv.xmltv import XmltvBuilder
 from goodline_iptv.goodline_playlist import parse_playlist
 
@@ -52,7 +53,7 @@ async def download_epg(http, url, out_dir):
 
         data = await response.read()
 
-        epg_path = os.path.join(out_dir, os.path.basename(urlsplit(url).path))
+        epg_path = path.join(out_dir, path.basename(urlsplit(url).path))
 
         log.debug(f'EPG successfully downloaded. Saving to "{epg_path}"')
 
@@ -67,10 +68,10 @@ async def download_epg(http, url, out_dir):
 
 async def download_icons(http, playlist, out_dir):
 
-    icons_dir = os.path.join(out_dir, 'icons')
+    icons_dir = path.join(out_dir, 'icons')
 
-    if not os.path.exists(icons_dir):
-        os.mkdir(icons_dir)
+    if not path.exists(icons_dir):
+        mkdir(icons_dir)
 
     async def download_icon(http, url, file_name):
         log.debug(f'Start downloading icon "{url}"')
@@ -83,7 +84,7 @@ async def download_icons(http, playlist, out_dir):
 
             log.debug(f'Icon "{url}" successfully downloaded. Saving...')
 
-            icon_path = os.path.join(icons_dir, file_name)
+            icon_path = path.join(icons_dir, file_name)
             async with open_file(icon_path, mode='w+b') as f:
                 await f.write(data)
 
@@ -119,7 +120,7 @@ async def create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_x
                 xmltv_builder.add_track(channel.track_id, prev_time, time, prev_name)
             prev_time, prev_name = time, name
 
-    await xmltv_builder.save(os.path.join(out_dir, EPG_FILENAME), pretty_xmltv)
+    await xmltv_builder.save(path.join(out_dir, EPG_FILENAME), pretty_xmltv)
 
 
 async def main(out_dir, encoding, timezone, pretty_xmltv):
@@ -127,9 +128,9 @@ async def main(out_dir, encoding, timezone, pretty_xmltv):
 
     log.info("Let's do it :)")
 
-    if not os.path.exists(out_dir):
+    if not path.exists(out_dir):
         log.debug(f'Directory {out_dir} does not exist. Creating.')
-        os.mkdir(out_dir)
+        mkdir(out_dir)
 
     async with Http() as http:
 
@@ -140,7 +141,7 @@ async def main(out_dir, encoding, timezone, pretty_xmltv):
 
         await gather(
             download_icons(http, playlist, out_dir),
-            create_m3u(playlist, os.path.join(out_dir, PLAYLIST_FILENAME), log)
+            create_m3u(playlist, path.join(out_dir, PLAYLIST_FILENAME), log)
         )
 
         await create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv)
