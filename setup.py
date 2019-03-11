@@ -22,7 +22,6 @@ setup(
     scripts=['import_goodline_iptv.py'],
     install_requires=[
         'aiohttp',
-        'aiofiles',
-        'teamcity-messages'
+        'aiofiles'
     ],
 )
