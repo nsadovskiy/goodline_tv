@@ -140,9 +140,10 @@ async def main(out_dir, encoding, timezone, pretty_xmltv):
 
         await gather(
             download_icons(http, playlist, out_dir),
-            create_m3u(playlist, os.path.join(out_dir, PLAYLIST_FILENAME), log),
-            create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv)
+            create_m3u(playlist, os.path.join(out_dir, PLAYLIST_FILENAME), log)
         )
+
+        await create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv)
 
     log.info(f'Finished due {datetime.now() - time_begin}')
 
