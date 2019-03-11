@@ -1,0 +1,13 @@
+[Unit]
+Description=Import Goodline IPTV on Docker Compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+WorkingDirectory=/store/app/goodline_iptv
+ExecStart=/usr/local/bin/docker-compose up
+ExecStop=/usr/local/bin/docker-compose down
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

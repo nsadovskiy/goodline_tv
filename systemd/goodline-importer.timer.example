@@ -1,0 +1,9 @@
+[Unit]
+Description=Run import Goodline IPTV every two hours
+
+[Timer]
+OnCalendar=0/2:00:000
+Persistent=true
+
+[Install]
+WantedBy=timers.target
