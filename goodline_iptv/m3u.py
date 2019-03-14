@@ -1,7 +1,7 @@
 from aiofiles import open as open_file
 
 
-async def create_m3u(playlist, m3u_path, log):
+async def create_m3u(playlist, m3u_path, transformer, log):
 
     log.info('Start creating m3u playlist')
 
@@ -9,7 +9,7 @@ async def create_m3u(playlist, m3u_path, log):
 
         await m3u_file.write('#EXTM3U\n')
 
-        for channel in playlist.values():
+        for channel in (transformer.transform(c) if transformer else c for c in playlist.values()):
             await m3u_file.write(f'#EXTINF:-1 tvg-name="{channel["epg_id"]}", tvg-logo="{channel["icon_name"]}", {channel["name"]}\n{channel["stream_url"]}\n')
 
     log.info('Creating playlist complete')

@@ -10,6 +10,7 @@ from goodline_iptv.m3u import create_m3u
 from goodline_iptv.jtvfile import JtvFile
 from goodline_iptv.xmltv import XmltvBuilder
 from goodline_iptv.goodline_playlist import parse_playlist
+from goodline_iptv.udpxy_address_tarnsformer import UdpxyAddressTransformer
 
 
 EPG_URL = 'http://bolshoe.tv/tv.zip'
@@ -123,7 +124,7 @@ async def create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_x
     await xmltv_builder.save(path.join(out_dir, EPG_FILENAME), pretty_xmltv)
 
 
-async def main(out_dir, encoding, timezone, pretty_xmltv):
+async def main(out_dir, encoding, timezone, pretty_xmltv, udpxy):
     time_begin = datetime.now()
 
     log.info("Let's do it :)")
@@ -141,16 +142,18 @@ async def main(out_dir, encoding, timezone, pretty_xmltv):
 
         await download_icons(http, playlist, out_dir)
 
+        transformer = UdpxyAddressTransformer(udpxy) if udpxy else None
+
         await gather(
             create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv),
-            create_m3u(playlist, path.join(out_dir, PLAYLIST_FILENAME), log)
+            create_m3u(playlist, path.join(out_dir, PLAYLIST_FILENAME), transformer, log)
         )
 
     log.info(f'Finished due {datetime.now() - time_begin}')
 
 
-def do_import(verbosity, out_dir, encoding, timezone, pretty_xmltv=False):
+def do_import(verbosity, out_dir, encoding, timezone, pretty_xmltv=False, udpxy=None):
 
     log.setLevel((4 - verbosity) * 10)
 
-    get_event_loop().run_until_complete(main(out_dir, encoding, timezone, pretty_xmltv))
+    get_event_loop().run_until_complete(main(out_dir, encoding, timezone, pretty_xmltv, udpxy))
