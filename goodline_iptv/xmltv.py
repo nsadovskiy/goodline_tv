@@ -32,9 +32,9 @@ class XmltvBuilder(object):
         title = SubElement(programme, 'title', lang='ru')
         title.text = name
 
-    async def save(self, path, pretty=False):
+    async def save(self, path):
         async with open_file(path, mode='w') as f:
-            await f.write(self.to_string(pretty))
+            await f.write(self.to_string())
 
-    def to_string(self, pretty=False):
-        return minidom.parseString(tostring(self.root, encoding='unicode')).toprettyxml(indent=' ') if pretty else tostring(self.root, encoding='unicode')
+    def to_string(self):
+        return minidom.parseString(tostring(self.root, encoding='unicode')).toprettyxml(indent=' ')

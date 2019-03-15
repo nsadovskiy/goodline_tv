@@ -98,7 +98,7 @@ async def download_icons(http, playlist, out_dir):
     log.info('Icons downloading finished')
 
 
-async def create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv=False):
+async def create_xmltv(out_dir, epg_path, playlist, encoding, timezone):
 
     xmltv_builder = XmltvBuilder(timezone)
 
@@ -121,10 +121,10 @@ async def create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_x
                 xmltv_builder.add_track(channel.track_id, prev_time, time, prev_name)
             prev_time, prev_name = time, name
 
-    await xmltv_builder.save(path.join(out_dir, EPG_FILENAME), pretty_xmltv)
+    await xmltv_builder.save(path.join(out_dir, EPG_FILENAME))
 
 
-async def main(out_dir, encoding, timezone, pretty_xmltv, udpxy):
+async def main(out_dir, encoding, timezone, udpxy):
     time_begin = datetime.now()
 
     log.info("Let's do it :)")
@@ -145,15 +145,15 @@ async def main(out_dir, encoding, timezone, pretty_xmltv, udpxy):
         transformer = UdpxyAddressTransformer(udpxy) if udpxy else None
 
         await gather(
-            create_xmltv(out_dir, epg_path, playlist, encoding, timezone, pretty_xmltv),
+            create_xmltv(out_dir, epg_path, playlist, encoding, timezone),
             create_m3u(playlist, path.join(out_dir, PLAYLIST_FILENAME), transformer, log)
         )
 
     log.info(f'Finished due {datetime.now() - time_begin}')
 
 
-def do_import(verbosity, out_dir, encoding, timezone, pretty_xmltv=False, udpxy=None):
+def do_import(verbosity, out_dir, encoding, timezone, udpxy=None):
 
     log.setLevel((4 - verbosity) * 10)
 
-    get_event_loop().run_until_complete(main(out_dir, encoding, timezone, pretty_xmltv, udpxy))
+    get_event_loop().run_until_complete(main(out_dir, encoding, timezone, udpxy))
