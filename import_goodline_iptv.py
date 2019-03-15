@@ -7,7 +7,10 @@ from goodline_iptv.importer import do_import
 if __name__ == '__main__':
     parser = configargparse.ArgParser()
 
-    parser.add_argument('-o', '--out-dir', required=True, help='Output directory')
+    parser.add_argument('-o', '--out-dir',
+                        required=True,
+                        env_var='OUTDIR',
+                        help='Output directory')
 
     parser.add_argument('-e', '--encoding',
                         default='cp1251',
