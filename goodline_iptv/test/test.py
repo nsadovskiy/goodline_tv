@@ -53,7 +53,7 @@ class TestXmltv(unittest.TestCase):
         self.xml.add_track('0', datetime(2019, 3, 4, 6, 30), datetime(2019, 3, 11, 7, 15), 'Православный приговор')
         self.xml.add_track('0', datetime(2019, 3, 4, 7, 20), datetime(2019, 3, 11, 23, 0), 'Очередное Ток-шоу "Что там у хохлов"')
 
-    def test_buildPretty(self):
+    def test_build(self):
         result = ('<?xml version="1.0" ?>\n'
                   '<tv generator-info-name="Preved" generator-info-url="http://www.medved.info">\n'
                   ' <channel id="0">\n'
@@ -73,11 +73,7 @@ class TestXmltv(unittest.TestCase):
                   '  <title lang="ru">Очередное Ток-шоу &quot;Что там у хохлов&quot;</title>\n'
                   ' </programme>\n'
                   '</tv>\n')
-        self.assertEqual(self.xml.to_string(True), result)
-
-    def test_build(self):
-        result = '<tv generator-info-name="Preved" generator-info-url="http://www.medved.info"><channel id="0"><display-name>1 канал, канает и будет канать</display-name><icon>1channel.png</icon></channel><programme channel="0" start="20190304050000 +0700" stop="20190311051500 +0700"><title lang="ru">Утренняя зарядка воды с Аланом Чумаком</title></programme><programme channel="0" start="20190304052000 +0700" stop="20190311062000 +0700"><title lang="ru">Чушь с Владимиром Познером</title></programme><programme channel="0" start="20190304063000 +0700" stop="20190311071500 +0700"><title lang="ru">Православный приговор</title></programme><programme channel="0" start="20190304072000 +0700" stop="20190311230000 +0700"><title lang="ru">Очередное Ток-шоу "Что там у хохлов"</title></programme></tv>'
-        self.assertEqual(self.xml.to_string(False), result)
+        self.assertEqual(self.xml.to_string(), result)
 
 
 if __name__ == '__main__':
